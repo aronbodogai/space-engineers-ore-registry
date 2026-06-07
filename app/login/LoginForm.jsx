@@ -1,12 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { login } from "./actions";
 import Turnstile from "../../components/Turnstile";
 import SubmitButton from "../../components/SubmitButton";
 
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export default function LoginForm({ next = "/" }) {
   const [state, formAction] = useActionState(login, {});
+  const [hasToken, setHasToken] = useState(false);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -42,9 +45,13 @@ export default function LoginForm({ next = "/" }) {
         />
       </div>
 
-      <Turnstile />
+      <Turnstile onToken={(t) => setHasToken(!!t)} />
 
-      <SubmitButton className="btn-primary w-full" pendingText="Logging in…">
+      <SubmitButton
+        className="btn-primary w-full"
+        pendingText="Logging in…"
+        disabled={TURNSTILE_ENABLED && !hasToken}
+      >
         Log in
       </SubmitButton>
     </form>

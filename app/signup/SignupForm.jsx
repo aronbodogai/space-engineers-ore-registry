@@ -1,13 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { signup } from "./actions";
 import Turnstile from "../../components/Turnstile";
 import SubmitButton from "../../components/SubmitButton";
 
+const TURNSTILE_ENABLED = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export default function SignupForm() {
   const [state, formAction] = useActionState(signup, {});
+  const [hasToken, setHasToken] = useState(false);
 
   if (state?.notice) {
     return (
@@ -72,9 +75,13 @@ export default function SignupForm() {
         />
       </div>
 
-      <Turnstile />
+      <Turnstile onToken={(t) => setHasToken(!!t)} />
 
-      <SubmitButton className="btn-primary w-full" pendingText="Creating…">
+      <SubmitButton
+        className="btn-primary w-full"
+        pendingText="Creating…"
+        disabled={TURNSTILE_ENABLED && !hasToken}
+      >
         Create account
       </SubmitButton>
     </form>
