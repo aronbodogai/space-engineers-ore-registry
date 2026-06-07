@@ -2,6 +2,7 @@
   "name": "space-engineers-ore-registry",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
+    "@vercel/analytics": "^2.0.1",
     "next": "^16.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

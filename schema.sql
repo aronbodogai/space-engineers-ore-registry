@@ -197,6 +197,21 @@ create or replace view public.location_ratings as
   from public.ratings
   group by location_id;
 
+-- Locations joined with their server name and rating summary. The browse page
+-- queries this so it can filter by minimum rating and sort by rating directly.
+-- security_invoker = on so the underlying locations RLS still applies to the
+-- caller (hidden rows stay hidden to non-owners/non-admins).
+create or replace view public.locations_with_stats
+with (security_invoker = on) as
+  select
+    l.*,
+    s.name                  as server_name,
+    coalesce(r.avg_score, 0) as avg_score,
+    coalesce(r.rating_count, 0) as rating_count
+  from public.locations l
+  join public.servers s        on s.id = l.server_id
+  left join public.location_ratings r on r.location_id = l.id;
+
 -- =============================================================
 -- Triggers
 -- =============================================================
@@ -234,6 +249,14 @@ create policy "Profiles are readable by everyone"
 create policy "Users can update their own profile"
   on public.profiles for update
   using (id = auth.uid());
+
+-- Admins can update any profile (promote/demote, ban/unban). The
+-- guard_profile_privileges trigger still requires is_admin() for role/banned
+-- changes, so this is the policy that lets admins manage other users.
+create policy "Admins can update any profile"
+  on public.profiles for update
+  using (public.is_admin())
+  with check (public.is_admin());
 
 -- ----- servers ----------------------------------------------
 create policy "Servers are readable by everyone"
@@ -290,6 +313,27 @@ create policy "Users can update their own rating"
 create policy "Users can delete their own rating"
   on public.ratings for delete
   using (user_id = auth.uid());
+
+-- =============================================================
+-- Storage — optional location photos
+-- =============================================================
+-- Public bucket for the optional submission photo (image_url). Storage RLS is
+-- enabled by default on storage.objects, so we add explicit policies.
+insert into storage.buckets (id, name, public)
+values ('location-photos', 'location-photos', true)
+on conflict (id) do nothing;
+
+create policy "Anyone can view location photos"
+  on storage.objects for select
+  using (bucket_id = 'location-photos');
+
+create policy "Authenticated users can upload location photos"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'location-photos');
+
+create policy "Users can delete their own location photos"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'location-photos' and owner = auth.uid());
 
 -- =============================================================
 -- Notes

@@ -17,8 +17,6 @@ for infrastructure setup.
 
 ## Getting started (local dev)
 
-> The app code is scaffolded during the implementation phase. Once it exists:
-
 1. Install dependencies:
    ```bash
    npm install
@@ -37,18 +35,35 @@ for infrastructure setup.
 ## Database
 
 The full schema lives in [`schema.sql`](./schema.sql). Run it once in the
-Supabase SQL editor to create all tables, functions, and security rules.
-After signing up, promote your account to admin:
+Supabase SQL editor to create all tables, functions, views, security rules, and
+the `location-photos` storage bucket. After signing up, promote your account to
+admin:
 
 ```sql
 update public.profiles set role = 'admin' where username = 'YOUR_NAME';
 ```
 
-## Project files
+## Routes
 
-| File | Purpose |
+| Route | Purpose | Access |
+|---|---|---|
+| `/` | Home: search + recent / top locations. | Public |
+| `/locations` | Searchable, filterable, sortable list. | Public |
+| `/locations/[id]` | Detail: coords, copy-GPS, photo, ratings. | Public |
+| `/locations/[id]/edit` | Edit a location. | Owner / Admin |
+| `/submit` | Submit a location (GPS parse, near-duplicate check). | Members |
+| `/login`, `/signup` | Auth (Turnstile-protected). | Public |
+| `/profile` | Your submissions + account. | Members |
+| `/admin`, `/admin/servers`, `/admin/users` | Moderation & management. | Admins |
+
+## Project layout
+
+| Path | Purpose |
 |---|---|
+| `app/` | Routes, pages, and Server Actions (Next.js App Router). |
+| `components/` | Shared UI (nav, Turnstile widget, buttons, cards, stars). |
+| `lib/` | Supabase clients, auth guards, GPS parsing, Turnstile, helpers. |
 | `SPEC.md` | Product specification (features, data model, routes). |
-| `schema.sql` | Supabase database schema + row-level security. |
-| `INFRA.md` | Step-by-step infrastructure setup runbook. |
+| `schema.sql` | Supabase database schema, views, RLS, and storage setup. |
+| `INFRA.md` | Infrastructure setup runbook. |
 | `.env.example` | Template for required environment variables. |

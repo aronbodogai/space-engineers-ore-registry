@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import Nav from "../components/Nav";
 
 export const metadata = {
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen">
         <Nav />
         {children}
+        <Analytics />
       </body>
     </html>
   );

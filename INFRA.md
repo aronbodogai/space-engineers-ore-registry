@@ -30,7 +30,10 @@ effect on the next deploy.
 
 ## Remaining checklist
 
-- [ ] `schema.sql` run in Supabase
-- [ ] Turnstile widget created + keys in Vercel
-- [ ] Repo pushed with the Next.js scaffold (green deploy)
-- [ ] First admin promoted via SQL
+- [ ] `schema.sql` run in Supabase — now also creates the `locations_with_stats`
+      view, the admin profile-update policy, and the `location-photos` storage
+      bucket, so re-run it if you applied an earlier version.
+- [ ] Turnstile widget created + keys in Vercel (for local dev, the always-pass
+      test keys are documented in `.env.example`).
+- [ ] Repo pushed with the app (green deploy).
+- [ ] First admin promoted via SQL.
