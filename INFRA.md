@@ -46,10 +46,12 @@ there). If a partial `.git` folder already exists in the folder, delete it first
 2. **Run the schema:** open the project, go to the **SQL Editor**, click
    *New query*, paste the entire contents of [`schema.sql`](./schema.sql), and
    run it. You should see it create the tables, functions, and policies.
-3. **Collect the API keys:** Project Settings → **API**. Copy:
+3. **Collect the API keys:** Project Settings → **API Keys** (new
+   publishable/secret system; the legacy anon/service_role keys are deprecated).
+   Copy:
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY` (server-only secret)
+   - **Publishable** key (`sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (browser-safe)
+   - **Secret** key (`sb_secret_…`) → `SUPABASE_SECRET_KEY` (server-only secret — never expose)
 4. **Auth settings:** Authentication → Sign In / Providers.
    - Enable **Email** (email + password) for v1.
    - Under URL Configuration, add your site URLs to the redirect allowlist
