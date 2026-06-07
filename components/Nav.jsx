@@ -28,6 +28,13 @@ export default async function Nav() {
             Browse
           </Link>
 
+          <Link
+            href="/nearby"
+            className="rounded-md px-3 py-1.5 text-muted hover:text-text"
+          >
+            Nearest
+          </Link>
+
           {user && (
             <Link
               href="/submit"

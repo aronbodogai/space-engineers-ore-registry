@@ -1,10 +1,14 @@
 import Link from "next/link";
 import Stars from "./Stars";
-import { seColorToCss, formatCoords } from "../lib/format";
+import { seColorToCss, formatCoords, formatDistance } from "../lib/format";
 
-/** Compact card for a location in the browse grid. */
-export default function LocationCard({ loc }) {
+/**
+ * Compact card for a location in the browse grid. Pass `distance` (in-game
+ * meters) to show a "… away" badge — used by the nearest-location search.
+ */
+export default function LocationCard({ loc, distance }) {
   const swatch = seColorToCss(loc.color);
+  const hasDistance = typeof distance === "number" && Number.isFinite(distance);
 
   return (
     <Link
@@ -39,6 +43,12 @@ export default function LocationCard({ loc }) {
       <p className="mt-3 font-mono text-xs text-muted">
         {formatCoords(loc.x, loc.y, loc.z)}
       </p>
+
+      {hasDistance && (
+        <p className="mt-2 text-sm font-semibold text-accent">
+          {formatDistance(distance)} away
+        </p>
+      )}
 
       <div className="mt-3">
         <Stars value={loc.avg_score} count={loc.rating_count} />

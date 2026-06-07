@@ -55,6 +55,9 @@ export default async function Home() {
         <Link href="/locations" className="btn-ghost">
           Browse all
         </Link>
+        <Link href="/nearby" className="btn-ghost">
+          Find nearest
+        </Link>
         <Link href="/submit" className="btn-ghost">
           Submit a location
         </Link>
