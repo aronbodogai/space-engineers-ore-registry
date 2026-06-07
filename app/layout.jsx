@@ -1,3 +1,6 @@
+import "./globals.css";
+import Nav from "../components/Nav";
+
 export const metadata = {
   title: "Space Engineers Ore & POI Registry",
   description:
@@ -7,15 +10,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        style={{
-          margin: 0,
-          fontFamily:
-            "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
-          background: "#0b1220",
-          color: "#e6edf6",
-        }}
-      >
+      <body className="min-h-screen">
+        <Nav />
         {children}
       </body>
     </html>

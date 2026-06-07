@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* Dark space theme — design tokens used across the app.
+   Tailwind v4 reads these custom properties via the @theme block. */
+@theme {
+  --color-bg: #0b1220;
+  --color-surface: #111a2b;
+  --color-border: #1e2a3d;
+  --color-text: #e6edf6;
+  --color-muted: #9fb0c3;
+  --color-accent: #75c9f1;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* Small reusable component classes layered on top of Tailwind utilities. */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+      text-sm font-medium transition-colors disabled:opacity-50
+      disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-[--color-accent] text-[#06223a] hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply btn border border-[--color-border] bg-[--color-surface]
+      text-[--color-muted] hover:text-[--color-text];
+  }
+  .card {
+    @apply rounded-xl border border-[--color-border] bg-[--color-surface] p-5;
+  }
+  .input {
+    @apply w-full rounded-lg border border-[--color-border] bg-[#0d1626]
+      px-3 py-2 text-sm text-[--color-text] outline-none
+      focus:border-[--color-accent];
+  }
+  .label {
+    @apply mb-1 block text-xs font-medium uppercase tracking-wide
+      text-[--color-muted];
+  }
+}

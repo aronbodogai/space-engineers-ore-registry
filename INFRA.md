@@ -1,141 +1,36 @@
-# Infrastructure Setup Runbook
+# Infrastructure — quick reference
 
-Follow these phases in order. Each one ends with values you'll paste into the
-next. Keep a scratch note open for the keys you collect — you'll enter them all
-into Vercel at the end.
+Infra is set up: GitHub repo, Supabase project, Cloudflare Turnstile, and Vercel
+(connected to the repo, env vars added). This is now just a reference; the focus
+has moved to building the app. For product detail see [`SPEC.md`](./SPEC.md) and
+[`schema.sql`](./schema.sql).
 
-You already have **GitHub**, **Vercel**, and **Cloudflare** accounts. You still
-need a **Supabase** account (free — sign up with your GitHub login).
-
----
-
-## Phase 1 — GitHub repository
-
-Run these from the project folder on your own computer (git works normally
-there). If a partial `.git` folder already exists in the folder, delete it first
-— it's an empty stub left over from setup:
-
-- Windows (PowerShell): `Remove-Item -Recurse -Force .git`
-- macOS/Linux: `rm -rf .git`
-
-1. Create a new repository at <https://github.com/new>.
-   - Name: `space-engineers-ore-registry`
-   - Visibility: your choice (Private is fine; Vercel can still deploy it).
-   - Do **not** add a README/.gitignore (we already have them).
-2. Initialize and push the existing files:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial spec, schema, and config"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USER/space-engineers-ore-registry.git
-   git push -u origin main
-   ```
-
-> Tip: you can also authorize the GitHub connector via the `/mcp` command, after
-> which I can create and push the repo for you directly.
-
----
-
-## Phase 2 — Supabase (database + auth)
-
-1. Go to <https://supabase.com> and create a new project.
-   - Pick a region close to your players.
-   - Set a strong database password (save it).
-   - Wait ~2 minutes for it to provision.
-2. **Run the schema:** open the project, go to the **SQL Editor**, click
-   *New query*, paste the entire contents of [`schema.sql`](./schema.sql), and
-   run it. You should see it create the tables, functions, and policies.
-3. **Collect the API keys:** Project Settings → **API Keys** (new
-   publishable/secret system; the legacy anon/service_role keys are deprecated).
-   Copy:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **Publishable** key (`sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (browser-safe)
-   - **Secret** key (`sb_secret_…`) → `SUPABASE_SECRET_KEY` (server-only secret — never expose)
-4. **Auth settings:** Authentication → Sign In / Providers.
-   - Enable **Email** (email + password) for v1.
-   - Under URL Configuration, add your site URLs to the redirect allowlist
-     (add `http://localhost:3000` now; add the Vercel URL after Phase 4).
-5. **Storage (optional, for location photos):** Storage → create a public
-   bucket named `location-images`.
-
----
-
-## Phase 3 — Cloudflare Turnstile (bot protection)
-
-1. In the Cloudflare dashboard, open **Turnstile** and add a new widget.
-   - Name: `ore-registry`
-   - Hostnames: add `localhost` and your Vercel domain (you can edit later).
-   - Widget mode: **Managed** (recommended).
-2. Copy the two keys it generates:
-   - **Site Key** → `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (public, used in the browser)
-   - **Secret Key** → `TURNSTILE_SECRET_KEY` (server-only secret)
-
-The app verifies the token server-side against
-`https://challenges.cloudflare.com/turnstile/v0/siteverify` before allowing a
-submission, login, or search.
-
----
-
-## Phase 4 — Vercel (hosting + CI/CD)
-
-1. Go to <https://vercel.com> → **Add New… → Project**.
-2. **Import** the `space-engineers-ore-registry` GitHub repo. Authorize Vercel
-   to access it if prompted. Vercel auto-detects Next.js — leave build settings
-   default.
-3. **Environment Variables:** before deploying, add all five from your scratch
-   note (see the table below). Add them to **Production**, **Preview**, and
-   **Development**.
-4. Click **Deploy**. Every future `git push` to `main` auto-deploys; pull
-   requests get preview URLs.
-
-> Note: the deploy will only succeed once the Next.js app exists (the
-> implementation phase). You can connect the repo now and the first green deploy
-> will follow as soon as app code lands.
-
-5. After the first deploy, copy your `*.vercel.app` URL and:
-   - Add it to Supabase Auth redirect URLs (Phase 2, step 4).
-   - Add it to the Turnstile widget hostnames (Phase 3, step 1).
-
----
-
-## Phase 5 — Custom domain (optional)
-
-If you want a custom domain via Cloudflare:
-
-1. In Vercel → Project → **Settings → Domains**, add your domain.
-2. In Cloudflare DNS, add the record Vercel shows you (usually a CNAME, or
-   A/AAAA for an apex domain).
-3. Set the Cloudflare proxy to **DNS only** (grey cloud) for the Vercel record
-   to avoid double-proxying, unless you intentionally want Cloudflare in front.
-
----
-
-## Environment variable reference
+## Environment variables
 
 | Variable | Source | Exposure |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API | Public |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API | Public |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API | **Server only** |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API Keys | Public |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Settings → API Keys | Public |
+| `SUPABASE_SECRET_KEY` | Supabase → Settings → API Keys | **Server only** |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare → Turnstile | Public |
 | `TURNSTILE_SECRET_KEY` | Cloudflare → Turnstile | **Server only** |
 
-Anything prefixed `NEXT_PUBLIC_` is bundled into the browser — never put a
-secret behind that prefix. The two server-only keys must stay out of client code.
+Uses Supabase's new publishable/secret keys (not legacy anon/service_role).
+Never put a secret behind `NEXT_PUBLIC_` or commit it. Env var changes only take
+effect on the next deploy.
 
----
+## Notes
 
-## Setup checklist
+- **Database:** run [`schema.sql`](./schema.sql) once in the Supabase SQL editor.
+- **First admin:** after signing up, run
+  `update public.profiles set role = 'admin' where username = 'YOUR_NAME';`
+- **Deploys:** every `git push` to `main` auto-deploys; PRs get preview URLs.
+- **Custom domain:** Vercel → Settings → Domains, then add the record in
+  Cloudflare DNS (set the Vercel record to DNS-only / grey cloud).
 
-- [ ] GitHub repo created and pushed
-- [ ] Supabase project created
-- [ ] `schema.sql` run successfully
-- [ ] Supabase API keys collected
-- [ ] Email auth enabled + redirect URLs set
-- [ ] (Optional) `location-images` storage bucket created
-- [ ] Turnstile widget created + keys collected
-- [ ] Vercel project imported from GitHub
-- [ ] All 5 env vars added to Vercel
-- [ ] First deploy green (after app scaffold)
+## Remaining checklist
+
+- [ ] `schema.sql` run in Supabase
+- [ ] Turnstile widget created + keys in Vercel
+- [ ] Repo pushed with the Next.js scaffold (green deploy)
 - [ ] First admin promoted via SQL
