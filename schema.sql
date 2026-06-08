@@ -188,8 +188,10 @@ as $$
   order by distance asc;
 $$;
 
--- Per-location rating summary (average + count).
-create or replace view public.location_ratings as
+-- Per-location rating summary (average + count). security_invoker = on so the
+-- view enforces the caller's RLS on public.ratings rather than the view owner's.
+create or replace view public.location_ratings
+with (security_invoker = on) as
   select
     location_id,
     round(avg(score)::numeric, 1) as avg_score,
