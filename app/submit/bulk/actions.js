@@ -5,7 +5,11 @@ import { requireUser } from "../../../lib/auth";
 import { verifyTurnstile } from "../../../lib/turnstile";
 import { getClientIp } from "../../../lib/ip";
 import { parseGps } from "../../../lib/gps";
-import { ENVIRONMENTS, DEFAULT_ENVIRONMENT } from "../../../lib/constants";
+import {
+  ENVIRONMENTS,
+  DEFAULT_ENVIRONMENT,
+  ORE_SIZES,
+} from "../../../lib/constants";
 
 // Guard against an accidental huge paste (and slow inserts / timeouts).
 const MAX_ROWS = 500;
@@ -75,6 +79,7 @@ export async function bulkImport(prevState, formData) {
       : DEFAULT_ENVIRONMENT;
 
     const exposed = type === "ore" ? row?.exposed === true : false;
+    const size = type === "ore" && ORE_SIZES.includes(row?.size) ? row.size : null;
 
     const { name, x, y, z, color, gps_raw } = parsed.value;
     inserts.push({
@@ -83,6 +88,7 @@ export async function bulkImport(prevState, formData) {
       type,
       resource,
       exposed,
+      size,
       x,
       y,
       z,

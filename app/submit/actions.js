@@ -6,6 +6,7 @@ import { requireUser } from "../../lib/auth";
 import { verifyTurnstile } from "../../lib/turnstile";
 import { getClientIp } from "../../lib/ip";
 import { parseGps } from "../../lib/gps";
+import { ORE_SIZES } from "../../lib/constants";
 
 export async function submitLocation(prevState, formData) {
   const { user, profile } = await requireUser("/submit");
@@ -43,6 +44,8 @@ export async function submitLocation(prevState, formData) {
     return { error: "Enter the ore / resource for an ore deposit." };
   }
   const exposed = type === "ore" && formData.get("exposed") === "on";
+  const sizeRaw = String(formData.get("size") || "").trim();
+  const size = type === "ore" && ORE_SIZES.includes(sizeRaw) ? sizeRaw : null;
 
   const { name, x, y, z, color, gps_raw } = parsed.value;
 
@@ -55,6 +58,7 @@ export async function submitLocation(prevState, formData) {
       type,
       resource,
       exposed,
+      size,
       x,
       y,
       z,

@@ -8,6 +8,7 @@ import {
   ENVIRONMENTS,
   DEFAULT_ENVIRONMENT,
   ORE_RESOURCES,
+  ORE_SIZES,
   PHOTO_BUCKET,
 } from "../../../../lib/constants";
 import { seColorToCss } from "../../../../lib/format";
@@ -173,6 +174,27 @@ export default function EditForm({ servers, location }) {
           </select>
         </div>
       </div>
+
+      {type === "ore" && (
+        <div className="sm:max-w-xs">
+          <label className="label" htmlFor="size">
+            Size (optional)
+          </label>
+          <select
+            className="select"
+            id="size"
+            name="size"
+            defaultValue={location.size ?? ""}
+          >
+            <option value="">— unspecified —</option>
+            {ORE_SIZES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {type === "ore" && (
         <label className="flex items-center gap-2 text-sm">

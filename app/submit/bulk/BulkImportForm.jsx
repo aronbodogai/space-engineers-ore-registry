@@ -7,6 +7,7 @@ import { parseGps } from "../../../lib/gps";
 import { detectOre } from "../../../lib/resources";
 import {
   ORE_RESOURCES,
+  ORE_SIZES,
   ENVIRONMENTS,
   DEFAULT_ENVIRONMENT,
 } from "../../../lib/constants";
@@ -70,6 +71,7 @@ export default function BulkImportForm({ servers }) {
         type: resource ? "ore" : "poi",
         resource: resource ?? "",
         exposed: resource ? exposed : false,
+        size: "",
         environment: DEFAULT_ENVIRONMENT,
       });
     }
@@ -117,6 +119,7 @@ export default function BulkImportForm({ servers }) {
       type: r.type,
       resource: r.resource,
       exposed: r.exposed,
+      size: r.size,
       environment: r.environment,
     }))
   );
@@ -223,6 +226,7 @@ export default function BulkImportForm({ servers }) {
                 <th className="p-2 font-medium">Type</th>
                 <th className="p-2 font-medium">Resource</th>
                 <th className="p-2 font-medium">Exposed</th>
+                <th className="p-2 font-medium">Size</th>
                 <th className="p-2 font-medium">Environment</th>
                 <th className="p-2"></th>
               </tr>
@@ -284,6 +288,27 @@ export default function BulkImportForm({ servers }) {
                         }
                         aria-label={`Exposed for ${r.name}`}
                       />
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
+                  </td>
+                  <td className="p-2">
+                    {r.type === "ore" ? (
+                      <select
+                        className="select"
+                        value={r.size}
+                        onChange={(e) =>
+                          updateRow(r.key, { size: e.target.value })
+                        }
+                        aria-label={`Size for ${r.name}`}
+                      >
+                        <option value="">—</option>
+                        {ORE_SIZES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
                       <span className="text-muted">—</span>
                     )}

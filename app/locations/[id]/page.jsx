@@ -90,6 +90,7 @@ export default async function LocationDetail({ params }) {
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {loc.exposed && <span className="badge badge-exposed">Exposed</span>}
+          {loc.size && <span className="badge badge-size">{loc.size}</span>}
           <span className="badge">{typeLabel(loc.type)}</span>
         </div>
       </header>

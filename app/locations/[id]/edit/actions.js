@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "../../../../lib/supabase/server";
 import { requireUser } from "../../../../lib/auth";
 import { parseGps } from "../../../../lib/gps";
+import { ORE_SIZES } from "../../../../lib/constants";
 
 export async function updateLocation(prevState, formData) {
   await requireUser();
@@ -31,6 +32,8 @@ export async function updateLocation(prevState, formData) {
     return { error: "Enter the ore / resource for an ore deposit." };
   }
   const exposed = type === "ore" && formData.get("exposed") === "on";
+  const sizeRaw = String(formData.get("size") || "").trim();
+  const size = type === "ore" && ORE_SIZES.includes(sizeRaw) ? sizeRaw : null;
 
   const { name, x, y, z, color, gps_raw } = parsed.value;
 
@@ -43,6 +46,7 @@ export async function updateLocation(prevState, formData) {
       type,
       resource,
       exposed,
+      size,
       x,
       y,
       z,

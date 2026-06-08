@@ -9,6 +9,7 @@ import {
   ENVIRONMENTS,
   DEFAULT_ENVIRONMENT,
   ORE_RESOURCES,
+  ORE_SIZES,
   PHOTO_BUCKET,
 } from "../../lib/constants";
 import { seColorToCss } from "../../lib/format";
@@ -232,6 +233,23 @@ export default function SubmitForm({ servers }) {
           </select>
         </div>
       </div>
+
+      {/* Size (ore only) */}
+      {type === "ore" && (
+        <div className="sm:max-w-xs">
+          <label className="label" htmlFor="size">
+            Size (optional)
+          </label>
+          <select className="select" id="size" name="size" defaultValue="">
+            <option value="">— unspecified —</option>
+            {ORE_SIZES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Exposed (ore only) */}
       {type === "ore" && (
