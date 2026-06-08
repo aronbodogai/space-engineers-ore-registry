@@ -4,6 +4,7 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { submitLocation } from "./actions";
 import { parseGps } from "../../lib/gps";
+import { detectOre } from "../../lib/resources";
 import { createClient } from "../../lib/supabase/client";
 import {
   ENVIRONMENTS,
@@ -22,8 +23,10 @@ export default function SubmitForm({ servers }) {
   const [state, formAction] = useActionState(submitLocation, {});
 
   const [gps, setGps] = useState("");
-  const [serverId, setServerId] = useState(servers[0]?.id ?? "");
+  const [serverId, setServerId] = useState("");
   const [type, setType] = useState("ore");
+  const [resource, setResource] = useState("");
+  const [exposed, setExposed] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
   const [hasToken, setHasToken] = useState(false);
 
@@ -65,6 +68,18 @@ export default function SubmitForm({ servers }) {
       clearTimeout(handle);
     };
   }, [coords?.x, coords?.y, coords?.z, serverId]);
+
+  // Auto-fill type, resource, and exposed from the parsed GPS name.
+  const POI_KEYWORDS = ["watch", "station"];
+  useEffect(() => {
+    if (!coords?.name) return;
+    const lower = coords.name.toLowerCase();
+    const isPoi = POI_KEYWORDS.some((kw) => lower.includes(kw));
+    setType(isPoi ? "poi" : "ore");
+    const { resource: detected, exposed: isExposed } = detectOre(coords.name);
+    setResource(detected ?? "");
+    setExposed(isExposed);
+  }, [coords?.name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset the acknowledgement whenever the set of matches changes.
   useEffect(() => {
@@ -167,6 +182,9 @@ export default function SubmitForm({ servers }) {
             onChange={(e) => setServerId(e.target.value)}
             required
           >
+            <option value="" disabled>
+              — choose a server —
+            </option>
             {servers.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -206,6 +224,8 @@ export default function SubmitForm({ servers }) {
               list="ore-resources"
               required
               placeholder="e.g. Ice"
+              value={resource}
+              onChange={(e) => setResource(e.target.value)}
             />
             <datalist id="ore-resources">
               {ORE_RESOURCES.map((r) => (
@@ -254,7 +274,12 @@ export default function SubmitForm({ servers }) {
       {/* Exposed (ore only) */}
       {type === "ore" && (
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="exposed" />
+          <input
+            type="checkbox"
+            name="exposed"
+            checked={exposed}
+            onChange={(e) => setExposed(e.target.checked)}
+          />
           Exposed deposit — visible on the surface, easy to mine
         </label>
       )}
