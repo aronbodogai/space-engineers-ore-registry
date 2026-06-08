@@ -4,7 +4,7 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { bulkImport } from "./actions";
 import { parseGps } from "../../../lib/gps";
-import { guessResource } from "../../../lib/resources";
+import { detectOre } from "../../../lib/resources";
 import {
   ORE_RESOURCES,
   ENVIRONMENTS,
@@ -58,7 +58,7 @@ export default function BulkImportForm({ servers }) {
       }
       seen.add(key);
 
-      const resource = guessResource(result.value.name);
+      const { resource, exposed } = detectOre(result.value.name);
       nextRows.push({
         key: ++rowKeySeq,
         gps_raw: result.value.gps_raw,
@@ -69,6 +69,7 @@ export default function BulkImportForm({ servers }) {
         color: result.value.color,
         type: resource ? "ore" : "poi",
         resource: resource ?? "",
+        exposed: resource ? exposed : false,
         environment: DEFAULT_ENVIRONMENT,
       });
     }
@@ -115,6 +116,7 @@ export default function BulkImportForm({ servers }) {
       gps_raw: r.gps_raw,
       type: r.type,
       resource: r.resource,
+      exposed: r.exposed,
       environment: r.environment,
     }))
   );
@@ -220,6 +222,7 @@ export default function BulkImportForm({ servers }) {
                 <th className="p-2 font-medium">Name &amp; coords</th>
                 <th className="p-2 font-medium">Type</th>
                 <th className="p-2 font-medium">Resource</th>
+                <th className="p-2 font-medium">Exposed</th>
                 <th className="p-2 font-medium">Environment</th>
                 <th className="p-2"></th>
               </tr>
@@ -266,6 +269,20 @@ export default function BulkImportForm({ servers }) {
                         placeholder="e.g. Ice"
                         aria-label={`Resource for ${r.name}`}
                         aria-invalid={r.resource.trim() === ""}
+                      />
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
+                  </td>
+                  <td className="p-2 text-center">
+                    {r.type === "ore" ? (
+                      <input
+                        type="checkbox"
+                        checked={r.exposed}
+                        onChange={(e) =>
+                          updateRow(r.key, { exposed: e.target.checked })
+                        }
+                        aria-label={`Exposed for ${r.name}`}
                       />
                     ) : (
                       <span className="text-muted">—</span>

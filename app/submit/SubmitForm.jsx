@@ -233,6 +233,14 @@ export default function SubmitForm({ servers }) {
         </div>
       </div>
 
+      {/* Exposed (ore only) */}
+      {type === "ore" && (
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="exposed" />
+          Exposed deposit — visible on the surface, easy to mine
+        </label>
+      )}
+
       {/* Description */}
       <div>
         <label className="label" htmlFor="description">

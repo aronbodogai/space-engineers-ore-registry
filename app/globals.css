@@ -91,6 +91,10 @@ body {
     @apply inline-flex items-center rounded-full border border-border bg-bg
       px-2 py-0.5 text-xs text-muted;
   }
+  /* Desirable-attribute badge, e.g. surface-exposed ore. */
+  .badge-exposed {
+    @apply border-emerald-500/40 bg-emerald-500/10 text-emerald-200;
+  }
   .link {
     @apply text-accent hover:underline;
   }

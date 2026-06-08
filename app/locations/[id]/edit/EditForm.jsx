@@ -174,6 +174,17 @@ export default function EditForm({ servers, location }) {
         </div>
       </div>
 
+      {type === "ore" && (
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            name="exposed"
+            defaultChecked={location.exposed}
+          />
+          Exposed deposit — visible on the surface, easy to mine
+        </label>
+      )}
+
       <div>
         <label className="label" htmlFor="description">
           Description (optional)

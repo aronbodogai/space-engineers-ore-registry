@@ -44,6 +44,7 @@ create table public.locations (
   name         text not null,
   type         location_type not null,
   resource     text,                       -- e.g. Ice, Iron (ores only)
+  exposed      boolean not null default false, -- surface ore, easy to mine (ores)
   x            double precision not null,
   y            double precision not null,
   z            double precision not null,

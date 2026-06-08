@@ -33,8 +33,9 @@ export default function LocationCard({ loc, distance }) {
         </span>
       </div>
 
-      {(loc.resource || loc.planet) && (
+      {(loc.exposed || loc.resource || loc.planet) && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          {loc.exposed && <span className="badge badge-exposed">Exposed</span>}
           {loc.resource && <span className="badge">{loc.resource}</span>}
           {loc.planet && <span className="badge">{loc.planet}</span>}
         </div>

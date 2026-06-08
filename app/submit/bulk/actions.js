@@ -74,12 +74,15 @@ export async function bulkImport(prevState, formData) {
       ? row.environment
       : DEFAULT_ENVIRONMENT;
 
+    const exposed = type === "ore" ? row?.exposed === true : false;
+
     const { name, x, y, z, color, gps_raw } = parsed.value;
     inserts.push({
       server_id: serverId,
       name,
       type,
       resource,
+      exposed,
       x,
       y,
       z,

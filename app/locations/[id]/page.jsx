@@ -88,7 +88,10 @@ export default async function LocationDetail({ params }) {
             {loc.server?.name ?? "Unknown server"}
           </p>
         </div>
-        <span className="badge shrink-0">{typeLabel(loc.type)}</span>
+        <div className="flex shrink-0 items-center gap-2">
+          {loc.exposed && <span className="badge badge-exposed">Exposed</span>}
+          <span className="badge">{typeLabel(loc.type)}</span>
+        </div>
       </header>
 
       {/* Coordinates + copy */}

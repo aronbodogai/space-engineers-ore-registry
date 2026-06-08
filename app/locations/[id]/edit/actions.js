@@ -30,6 +30,7 @@ export async function updateLocation(prevState, formData) {
   if (type === "ore" && !resource) {
     return { error: "Enter the ore / resource for an ore deposit." };
   }
+  const exposed = type === "ore" && formData.get("exposed") === "on";
 
   const { name, x, y, z, color, gps_raw } = parsed.value;
 
@@ -41,6 +42,7 @@ export async function updateLocation(prevState, formData) {
       name,
       type,
       resource,
+      exposed,
       x,
       y,
       z,
