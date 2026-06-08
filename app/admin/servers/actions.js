@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "../../../lib/supabase/server";
 import { requireAdmin } from "../../../lib/auth";
 
@@ -21,6 +21,7 @@ export async function createServer(prevState, formData) {
   }
 
   revalidatePath("/admin/servers");
+  revalidateTag("servers");
   return { success: `Added “${name}”.` };
 }
 
@@ -35,6 +36,8 @@ export async function renameServer(formData) {
   const supabase = await createClient();
   await supabase.from("servers").update({ name, description }).eq("id", id);
   revalidatePath("/admin/servers");
+  revalidateTag("servers");
+  revalidateTag("locations");
 }
 
 export async function deleteServer(formData) {
@@ -46,4 +49,6 @@ export async function deleteServer(formData) {
   const supabase = await createClient();
   await supabase.from("servers").delete().eq("id", id);
   revalidatePath("/admin/servers");
+  revalidateTag("servers");
+  revalidateTag("locations");
 }

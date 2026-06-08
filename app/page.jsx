@@ -1,29 +1,9 @@
 import Link from "next/link";
-import { createClient } from "../lib/supabase/server";
 import LocationCard from "../components/LocationCard";
-
-const CARD_SELECT =
-  "id, name, type, resource, planet, color, x, y, z, server_name, avg_score, rating_count";
+import { getHomeListings } from "../lib/queries";
 
 export default async function Home() {
-  const supabase = await createClient();
-
-  const [{ data: recent }, { data: top }] = await Promise.all([
-    supabase
-      .from("locations_with_stats")
-      .select(CARD_SELECT)
-      .eq("is_hidden", false)
-      .order("created_at", { ascending: false })
-      .limit(6),
-    supabase
-      .from("locations_with_stats")
-      .select(CARD_SELECT)
-      .eq("is_hidden", false)
-      .gt("rating_count", 0)
-      .order("avg_score", { ascending: false })
-      .order("rating_count", { ascending: false })
-      .limit(6),
-  ]);
+  const { recent, top } = await getHomeListings();
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-16">

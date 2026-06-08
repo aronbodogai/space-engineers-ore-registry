@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { createClient } from "../../lib/supabase/server";
 import { requireUser } from "../../lib/auth";
 import { verifyTurnstile } from "../../lib/turnstile";
@@ -79,5 +80,6 @@ export async function submitLocation(prevState, formData) {
     return { error: error.message };
   }
 
+  revalidateTag("locations");
   redirect(`/locations/${data.id}`);
 }

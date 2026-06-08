@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "../../lib/supabase/server";
 import { requireUser, requireAdmin } from "../../lib/auth";
 
@@ -19,6 +19,7 @@ export async function rateLocation(locationId, score) {
       { onConflict: "location_id,user_id" }
     );
   revalidatePath(`/locations/${locationId}`);
+  revalidateTag("locations");
 }
 
 /** Admin: hide or un-hide a location. The DB trigger also blocks non-admins. */
@@ -33,6 +34,7 @@ export async function setHidden(formData) {
   revalidatePath(`/locations/${id}`);
   revalidatePath("/admin");
   revalidatePath("/locations");
+  revalidateTag("locations");
 }
 
 /**
@@ -52,5 +54,6 @@ export async function deleteLocation(formData) {
   revalidatePath("/locations");
   revalidatePath("/profile");
   revalidatePath("/admin");
+  revalidateTag("locations");
   if (redirectTo) redirect(redirectTo);
 }

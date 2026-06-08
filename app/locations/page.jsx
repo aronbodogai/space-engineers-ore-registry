@@ -1,15 +1,13 @@
 import Link from "next/link";
-import { createClient } from "../../lib/supabase/server";
 import LocationCard from "../../components/LocationCard";
 import LocationFilters from "./LocationFilters";
+import { getServers, getBrowseLocations, PAGE_SIZE } from "../../lib/queries";
 
 export const metadata = {
   title: "Browse locations — Ore & POI Registry",
   description:
     "Search and filter Space Engineers ore deposits and points of interest by world, type, resource, planet, and rating.",
 };
-
-const PAGE_SIZE = 24;
 
 // Note: search runs server-side and lives in the URL so listings stay
 // crawlable and shareable (SPEC §2 SEO goal). Turnstile bot-protection is
@@ -30,48 +28,10 @@ export default async function LocationsPage({ searchParams }) {
     page: Math.max(1, parseInt(str(sp.page), 10) || 1),
   };
 
-  const supabase = await createClient();
-  const { data: servers } = await supabase
-    .from("servers")
-    .select("id, name")
-    .order("name");
-
-  let query = supabase
-    .from("locations_with_stats")
-    .select(
-      "id, name, type, resource, planet, color, x, y, z, image_url, created_at, server_id, server_name, avg_score, rating_count",
-      { count: "exact" }
-    )
-    .eq("is_hidden", false);
-
-  // Strip PostgREST-significant characters before building the OR filter.
-  const safeQ = params.q.replace(/[,()%*\\]/g, " ").trim();
-  if (safeQ) {
-    query = query.or(`name.ilike.%${safeQ}%,description.ilike.%${safeQ}%`);
-  }
-  if (params.server) query = query.eq("server_id", params.server);
-  if (params.type) query = query.eq("type", params.type);
-  if (params.resource.trim()) {
-    query = query.ilike("resource", `%${params.resource.trim()}%`);
-  }
-  if (params.planet) query = query.eq("planet", params.planet);
-  const minR = parseInt(params.minRating, 10);
-  if (minR >= 1 && minR <= 5) query = query.gte("avg_score", minR);
-
-  if (params.sort === "rating") {
-    query = query
-      .order("avg_score", { ascending: false })
-      .order("rating_count", { ascending: false });
-  } else if (params.sort === "name") {
-    query = query.order("name", { ascending: true });
-  } else {
-    query = query.order("created_at", { ascending: false });
-  }
-
-  const from = (params.page - 1) * PAGE_SIZE;
-  query = query.range(from, from + PAGE_SIZE - 1);
-
-  const { data: locations, count, error } = await query;
+  const [servers, { locations, count, error }] = await Promise.all([
+    getServers(),
+    getBrowseLocations(params),
+  ]);
   const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -90,7 +50,7 @@ export default async function LocationsPage({ searchParams }) {
 
       {error && (
         <p className="alert alert-error mt-6">
-          Couldn&apos;t load locations: {error.message}
+          Couldn&apos;t load locations: {error}
         </p>
       )}
 
