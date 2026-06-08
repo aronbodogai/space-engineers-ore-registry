@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LOCATION_TYPES, PLANETS, ORE_RESOURCES, SORTS } from "../../lib/constants";
+import { LOCATION_TYPES, ENVIRONMENTS, ORE_RESOURCES, SORTS } from "../../lib/constants";
 
 /**
  * Filter/search controls for the browse page. A plain GET form so results live
@@ -75,7 +75,7 @@ export default function LocationFilters({ servers, params }) {
 
       <div>
         <label className="label" htmlFor="planet">
-          Planet
+          Environment
         </label>
         <select
           className="select"
@@ -83,10 +83,10 @@ export default function LocationFilters({ servers, params }) {
           name="planet"
           defaultValue={params.planet}
         >
-          <option value="">All planets</option>
-          {PLANETS.map((p) => (
-            <option key={p} value={p}>
-              {p}
+          <option value="">All</option>
+          {ENVIRONMENTS.map((env) => (
+            <option key={env} value={env}>
+              {env}
             </option>
           ))}
         </select>

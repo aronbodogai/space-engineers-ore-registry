@@ -4,7 +4,12 @@ import { useActionState, useMemo, useState } from "react";
 import { updateLocation } from "./actions";
 import { parseGps } from "../../../../lib/gps";
 import { createClient } from "../../../../lib/supabase/client";
-import { PLANETS, ORE_RESOURCES, PHOTO_BUCKET } from "../../../../lib/constants";
+import {
+  ENVIRONMENTS,
+  DEFAULT_ENVIRONMENT,
+  ORE_RESOURCES,
+  PHOTO_BUCKET,
+} from "../../../../lib/constants";
 import { seColorToCss } from "../../../../lib/format";
 import SubmitButton from "../../../../components/SubmitButton";
 
@@ -149,18 +154,20 @@ export default function EditForm({ servers, location }) {
 
         <div>
           <label className="label" htmlFor="planet">
-            Planet / biome (optional)
+            Environment
           </label>
           <select
             className="select"
             id="planet"
             name="planet"
-            defaultValue={location.planet ?? ""}
+            defaultValue={location.planet || DEFAULT_ENVIRONMENT}
           >
-            <option value="">— none —</option>
-            {PLANETS.map((p) => (
-              <option key={p} value={p}>
-                {p}
+            {location.planet && !ENVIRONMENTS.includes(location.planet) && (
+              <option value={location.planet}>{location.planet} (legacy)</option>
+            )}
+            {ENVIRONMENTS.map((env) => (
+              <option key={env} value={env}>
+                {env}
               </option>
             ))}
           </select>

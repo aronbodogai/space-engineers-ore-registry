@@ -5,7 +5,12 @@ import Link from "next/link";
 import { submitLocation } from "./actions";
 import { parseGps } from "../../lib/gps";
 import { createClient } from "../../lib/supabase/client";
-import { PLANETS, ORE_RESOURCES, PHOTO_BUCKET } from "../../lib/constants";
+import {
+  ENVIRONMENTS,
+  DEFAULT_ENVIRONMENT,
+  ORE_RESOURCES,
+  PHOTO_BUCKET,
+} from "../../lib/constants";
 import { seColorToCss } from "../../lib/format";
 import Turnstile from "../../components/Turnstile";
 import SubmitButton from "../../components/SubmitButton";
@@ -211,13 +216,17 @@ export default function SubmitForm({ servers }) {
 
         <div>
           <label className="label" htmlFor="planet">
-            Planet / biome (optional)
+            Environment
           </label>
-          <select className="select" id="planet" name="planet" defaultValue="">
-            <option value="">— none —</option>
-            {PLANETS.map((p) => (
-              <option key={p} value={p}>
-                {p}
+          <select
+            className="select"
+            id="planet"
+            name="planet"
+            defaultValue={DEFAULT_ENVIRONMENT}
+          >
+            {ENVIRONMENTS.map((env) => (
+              <option key={env} value={env}>
+                {env}
               </option>
             ))}
           </select>

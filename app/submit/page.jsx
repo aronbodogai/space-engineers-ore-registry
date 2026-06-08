@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireUser } from "../../lib/auth";
 import { createClient } from "../../lib/supabase/server";
 import SubmitForm from "./SubmitForm";
@@ -18,7 +19,10 @@ export default async function SubmitPage() {
       <h1 className="text-2xl font-bold">Submit a location</h1>
       <p className="mt-1 text-sm text-muted">
         Paste a GPS string straight from the game — we&apos;ll parse the name and
-        coordinates. Your submission is published immediately.
+        coordinates. Your submission is published immediately.{" "}
+        <Link className="link" href="/submit/bulk">
+          Got a batch? Bulk-import many at once →
+        </Link>
       </p>
 
       {profile?.banned ? (
