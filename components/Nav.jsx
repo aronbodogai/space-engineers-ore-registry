@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser, isAdmin } from "../lib/auth";
+import Logo from "./Logo";
 
 /**
  * Top navigation bar. Server Component — reads the session so it can show the
@@ -13,10 +14,8 @@ export default async function Nav() {
   return (
     <header className="border-b border-border bg-surface/60 backdrop-blur">
       <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-accent">
-            SE
-          </span>
+        <Link href="/" className="flex items-center gap-2.5">
+          <Logo size={24} />
           <span className="text-sm font-semibold">Ore &amp; POI Registry</span>
         </Link>
 
