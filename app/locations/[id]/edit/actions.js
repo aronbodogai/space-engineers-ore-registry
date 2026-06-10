@@ -5,6 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "../../../../lib/supabase/server";
 import { requireUser } from "../../../../lib/auth";
 import { parseGps } from "../../../../lib/gps";
+import { safeImageUrl } from "../../../../lib/images";
 import { ORE_SIZES } from "../../../../lib/constants";
 
 export async function updateLocation(prevState, formData) {
@@ -19,7 +20,7 @@ export async function updateLocation(prevState, formData) {
   const resourceRaw = String(formData.get("resource") || "").trim();
   const planetRaw = String(formData.get("planet") || "").trim();
   const description = String(formData.get("description") || "").trim() || null;
-  const imageUrl = String(formData.get("image_url") || "").trim() || null;
+  const imageUrl = safeImageUrl(formData.get("image_url"));
 
   if (!serverId) return { error: "Choose which server / world this is on." };
   if (type !== "ore" && type !== "poi") return { error: "Choose a location type." };
