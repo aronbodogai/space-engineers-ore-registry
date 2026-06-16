@@ -3,7 +3,7 @@ import { requireUser } from "../../lib/auth";
 import { createClient } from "../../lib/supabase/server";
 import { deleteLocation } from "../locations/actions";
 import Stars from "../../components/Stars";
-import ConfirmButton from "../../components/ConfirmButton";
+import SubmitButton from "../../components/SubmitButton";
 import { formatDate } from "../../lib/format";
 
 export const metadata = { title: "Your profile — Ore & POI Registry" };
@@ -96,11 +96,11 @@ export default async function ProfilePage() {
                   </Link>
                   <form action={deleteLocation}>
                     <input type="hidden" name="id" value={loc.id} />
-                    <ConfirmButton
-                      message={`Delete “${loc.name}”? This cannot be undone.`}
+                    <SubmitButton
+                      confirm={`Delete “${loc.name}”? This cannot be undone.`}
                     >
                       Delete
-                    </ConfirmButton>
+                    </SubmitButton>
                   </form>
                 </div>
               </div>

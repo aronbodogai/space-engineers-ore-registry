@@ -2,7 +2,6 @@ import { createClient } from "../../../lib/supabase/server";
 import CreateServerForm from "./CreateServerForm";
 import { renameServer, deleteServer } from "./actions";
 import SubmitButton from "../../../components/SubmitButton";
-import ConfirmButton from "../../../components/ConfirmButton";
 
 export default async function AdminServersPage() {
   const supabase = await createClient();
@@ -57,11 +56,11 @@ export default async function AdminServersPage() {
 
               <form action={deleteServer} className="border-t border-border pt-3">
                 <input type="hidden" name="id" value={s.id} />
-                <ConfirmButton
-                  message={`Delete “${s.name}”? This permanently deletes the server and its ${count} location(s). This cannot be undone.`}
+                <SubmitButton
+                  confirm={`Delete “${s.name}”? This permanently deletes the server and its ${count} location(s). This cannot be undone.`}
                 >
                   Delete server
-                </ConfirmButton>
+                </SubmitButton>
               </form>
             </div>
           );

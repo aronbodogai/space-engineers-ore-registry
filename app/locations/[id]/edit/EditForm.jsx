@@ -3,51 +3,29 @@
 import { useActionState, useMemo, useState } from "react";
 import { updateLocation } from "./actions";
 import { parseGps } from "../../../../lib/gps";
-import { createClient } from "../../../../lib/supabase/client";
 import {
   ENVIRONMENTS,
   DEFAULT_ENVIRONMENT,
   ORE_RESOURCES,
   ORE_SIZES,
-  PHOTO_BUCKET,
 } from "../../../../lib/constants";
-import { seColorToCss } from "../../../../lib/format";
+import { usePhotoUpload } from "../../../../lib/usePhotoUpload";
 import SubmitButton from "../../../../components/SubmitButton";
+import GpsPreview from "../../../../components/GpsPreview";
 
 export default function EditForm({ servers, location }) {
   const [state, formAction] = useActionState(updateLocation, {});
 
   const [gps, setGps] = useState(location.gps_raw ?? "");
   const [type, setType] = useState(location.type);
-  const [uploading, setUploading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(location.image_url ?? "");
-  const [imageError, setImageError] = useState("");
+  const { uploading, imageUrl, imageError, handleImage } = usePhotoUpload({
+    initialUrl: location.image_url ?? "",
+    failureHint: " — keeping current photo.",
+  });
 
   const parsed = useMemo(() => parseGps(gps), [gps]);
   const coords = parsed.ok ? parsed.value : null;
   const showParseError = gps.trim() !== "" && !parsed.ok;
-
-  async function handleImage(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageError("");
-    setUploading(true);
-    try {
-      const supabase = createClient();
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage
-        .from(PHOTO_BUCKET)
-        .upload(path, file, { cacheControl: "3600", upsert: false });
-      if (error) throw error;
-      const { data } = supabase.storage.from(PHOTO_BUCKET).getPublicUrl(path);
-      setImageUrl(data.publicUrl);
-    } catch (err) {
-      setImageError((err?.message || "Upload failed") + " — keeping current photo.");
-    } finally {
-      setUploading(false);
-    }
-  }
 
   return (
     <form action={formAction} className="space-y-5">
@@ -70,28 +48,7 @@ export default function EditForm({ servers, location }) {
         {showParseError && (
           <p className="mt-1 text-xs text-red-300">{parsed.error}</p>
         )}
-        {coords && (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-            <span>
-              Name: <span className="text-text">{coords.name}</span>
-            </span>
-            <span>
-              X <span className="text-text">{coords.x}</span>
-            </span>
-            <span>
-              Y <span className="text-text">{coords.y}</span>
-            </span>
-            <span>
-              Z <span className="text-text">{coords.z}</span>
-            </span>
-            {coords.color && (
-              <span
-                className="inline-block h-3 w-3 rounded-sm border border-border"
-                style={{ background: seColorToCss(coords.color) ?? coords.color }}
-              />
-            )}
-          </div>
-        )}
+        <GpsPreview coords={coords} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

@@ -1,7 +1,7 @@
 import { createClient } from "../../../lib/supabase/server";
 import { requireAdmin } from "../../../lib/auth";
 import { setRole, setBanned } from "./actions";
-import ConfirmButton from "../../../components/ConfirmButton";
+import SubmitButton from "../../../components/SubmitButton";
 import { formatDate } from "../../../lib/format";
 
 export default async function AdminUsersPage() {
@@ -64,12 +64,11 @@ export default async function AdminUsersPage() {
                       Unban
                     </button>
                   ) : (
-                    <ConfirmButton
-                      className="btn-danger"
-                      message={`Ban ${u.username} from submitting?`}
+                    <SubmitButton
+                      confirm={`Ban ${u.username} from submitting?`}
                     >
                       Ban
-                    </ConfirmButton>
+                    </SubmitButton>
                   )}
                 </form>
               </div>

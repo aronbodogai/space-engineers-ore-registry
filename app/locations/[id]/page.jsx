@@ -5,7 +5,7 @@ import { getCurrentUser, isAdmin } from "../../../lib/auth";
 import { seColorToCss, formatCoords, formatDate } from "../../../lib/format";
 import { typeLabel } from "../../../lib/constants";
 import Stars from "../../../components/Stars";
-import ConfirmButton from "../../../components/ConfirmButton";
+import SubmitButton from "../../../components/SubmitButton";
 import CopyGpsButton from "./CopyGpsButton";
 import RatingWidget from "./RatingWidget";
 import { setHidden, deleteLocation } from "../actions";
@@ -185,9 +185,9 @@ export default async function LocationDetail({ params }) {
           <form action={deleteLocation}>
             <input type="hidden" name="id" value={loc.id} />
             <input type="hidden" name="redirectTo" value="/locations" />
-            <ConfirmButton message={`Delete “${loc.name}”? This cannot be undone.`}>
+            <SubmitButton confirm={`Delete “${loc.name}”? This cannot be undone.`}>
               Delete
-            </ConfirmButton>
+            </SubmitButton>
           </form>
         </section>
       )}

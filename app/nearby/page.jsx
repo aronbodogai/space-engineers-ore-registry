@@ -4,15 +4,13 @@ import LocationCard from "../../components/LocationCard";
 import NearbyForm from "./NearbyForm";
 import { parseGps, distance3d } from "../../lib/gps";
 import { formatCoords } from "../../lib/format";
+import { CARD_SELECT } from "../../lib/queries";
 
 export const metadata = {
   title: "Find nearest — Ore & POI Registry",
   description:
     "Paste your in-game GPS and find the closest Space Engineers ore deposits and points of interest on a world, sorted by distance.",
 };
-
-const CARD_SELECT =
-  "id, name, type, resource, planet, color, x, y, z, server_name, avg_score, rating_count";
 
 // Coordinates are only comparable within one server, so we fetch that server's
 // locations and rank them by 3-D distance in JS (reusing distance3d). This cap

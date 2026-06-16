@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "../../lib/supabase/server";
 import { setHidden, deleteLocation } from "../locations/actions";
-import ConfirmButton from "../../components/ConfirmButton";
+import SubmitButton from "../../components/SubmitButton";
 import { formatDate } from "../../lib/format";
 
 export default async function AdminContentPage({ searchParams }) {
@@ -90,11 +90,11 @@ export default async function AdminContentPage({ searchParams }) {
               </form>
               <form action={deleteLocation}>
                 <input type="hidden" name="id" value={loc.id} />
-                <ConfirmButton
-                  message={`Delete “${loc.name}”? This cannot be undone.`}
+                <SubmitButton
+                  confirm={`Delete “${loc.name}”? This cannot be undone.`}
                 >
                   Delete
-                </ConfirmButton>
+                </SubmitButton>
               </form>
             </div>
           </div>

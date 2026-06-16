@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { parseGps } from "../../lib/gps";
-import { seColorToCss } from "../../lib/format";
 import { LOCATION_TYPES, ORE_RESOURCES } from "../../lib/constants";
+import GpsPreview from "../../components/GpsPreview";
 
 /**
  * Proximity-search controls for /nearby. A plain GET form so results live in the
@@ -39,31 +39,7 @@ export default function NearbyForm({ servers, params, limits }) {
         {showParseError && (
           <p className="mt-1 text-xs text-red-300">{parsed.error}</p>
         )}
-        {coords && (
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-            <span>
-              Name: <span className="text-text">{coords.name}</span>
-            </span>
-            <span>
-              X <span className="text-text">{coords.x}</span>
-            </span>
-            <span>
-              Y <span className="text-text">{coords.y}</span>
-            </span>
-            <span>
-              Z <span className="text-text">{coords.z}</span>
-            </span>
-            {coords.color && (
-              <span className="inline-flex items-center gap-1">
-                Color
-                <span
-                  className="inline-block h-3 w-3 rounded-sm border border-border align-middle"
-                  style={{ background: seColorToCss(coords.color) ?? coords.color }}
-                />
-              </span>
-            )}
-          </div>
-        )}
+        <GpsPreview coords={coords} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
