@@ -112,13 +112,22 @@ export default async function NearbyPage({ searchParams }) {
         points of interest, nearest first.
       </p>
 
-      <div className="mt-6">
-        <NearbyForm
-          servers={servers ?? []}
-          params={params}
-          limits={RESULT_LIMITS}
-        />
-      </div>
+      {/* The server dropdown is required, so with no servers the form is a dead
+          end — say why, the same way /submit does. */}
+      {!servers || servers.length === 0 ? (
+        <p className="alert alert-warn mt-6">
+          No servers exist yet, so there is nothing to search. An admin needs to
+          add a server / world before locations can be charted.
+        </p>
+      ) : (
+        <div className="mt-6">
+          <NearbyForm
+            servers={servers}
+            params={params}
+            limits={RESULT_LIMITS}
+          />
+        </div>
+      )}
 
       {view === "parseError" && (
         <p className="alert alert-error mt-6">{parseError}</p>
