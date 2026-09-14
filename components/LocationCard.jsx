@@ -5,14 +5,16 @@ import { seColorToCss, formatCoords, formatDistance } from "../lib/format";
 /**
  * Compact card for a location in the browse grid. Pass `distance` (in-game
  * meters) to show a "… away" badge — used by the nearest-location search.
+ * `href` overrides the detail link, so the landing-page samples can point at
+ * the browse page instead of an id that doesn't exist.
  */
-export default function LocationCard({ loc, distance }) {
+export default function LocationCard({ loc, distance, href }) {
   const swatch = seColorToCss(loc.color);
   const hasDistance = typeof distance === "number" && Number.isFinite(distance);
 
   return (
     <Link
-      href={`/locations/${loc.id}`}
+      href={href ?? `/locations/${loc.id}`}
       className="card block transition-colors hover:border-accent"
     >
       <div className="flex items-start justify-between gap-3">

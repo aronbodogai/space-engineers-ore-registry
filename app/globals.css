@@ -33,13 +33,15 @@ body {
   /* Buttons */
   .btn-primary,
   .btn-ghost,
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
-      text-sm font-medium transition-colors;
+  .btn-danger,
+  .btn-success {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap
+      rounded-lg px-4 py-2 text-sm font-medium transition-colors;
   }
   .btn-primary:disabled,
   .btn-ghost:disabled,
-  .btn-danger:disabled {
+  .btn-danger:disabled,
+  .btn-success:disabled {
     @apply opacity-50 pointer-events-none;
   }
   .btn-primary {
@@ -51,6 +53,11 @@ body {
   .btn-danger {
     @apply border border-red-500/40 bg-red-500/10 text-red-300
       hover:bg-red-500/20;
+  }
+  /* Transient confirmation state for a button that just did the thing —
+     e.g. "Copy GPS" flipping to "Copied!" for a moment. */
+  .btn-success {
+    @apply bg-[#00bb7f] text-[#04231a] hover:brightness-110;
   }
 
   /* Surfaces */

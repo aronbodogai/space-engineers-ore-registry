@@ -6,7 +6,7 @@ import { seColorToCss, formatCoords, formatDate } from "../../../lib/format";
 import { typeLabel } from "../../../lib/constants";
 import Stars from "../../../components/Stars";
 import SubmitButton from "../../../components/SubmitButton";
-import CopyGpsButton from "./CopyGpsButton";
+import CopyGpsButton from "../../../components/CopyGpsButton";
 import RatingWidget from "./RatingWidget";
 import { setHidden, deleteLocation } from "../actions";
 
@@ -72,7 +72,7 @@ export default async function LocationDetail({ params }) {
         </p>
       )}
 
-      <header className="mt-4 flex items-start justify-between gap-4">
+      <header className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             {swatch && (
@@ -88,7 +88,9 @@ export default async function LocationDetail({ params }) {
             {loc.server?.name ?? "Unknown server"}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        {/* Full width on a phone: pinned shrink-0, three badges reserve enough
+            of the header to ellipsize the location's own name. */}
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:shrink-0">
           {loc.exposed && <span className="badge badge-exposed">Exposed</span>}
           {loc.size && <span className="badge badge-size">{loc.size}</span>}
           <span className="badge">{typeLabel(loc.type)}</span>

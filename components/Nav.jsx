@@ -13,13 +13,18 @@ export default async function Nav() {
 
   return (
     <header className="border-b border-border bg-surface/60 backdrop-blur">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3">
+      {/* Wraps rather than overflowing: the link row drops to a second line
+          on narrow phones instead of pushing the page into side-scroll. */}
+      <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-6 py-3">
         <Link href="/" className="flex items-center gap-2.5">
           <Logo size={24} />
           <span className="text-sm font-semibold">Ore &amp; POI Registry</span>
         </Link>
 
-        <div className="flex items-center gap-1 text-sm">
+        {/* Wraps too: signed in, this row holds Browse / Nearest / Submit /
+            username / Log out (plus Admin), which is wider than a phone on its
+            own line. Wrapping the nav alone would only move it, not fit it. */}
+        <div className="flex flex-wrap items-center justify-end gap-1 text-sm">
           <Link
             href="/locations"
             className="rounded-md px-3 py-1.5 text-muted hover:text-text"
